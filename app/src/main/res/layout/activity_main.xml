@@ -1,17 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="pl.fanfatal.swipecontrollerdemo.MainActivity">
 
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Title of the page" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_below="@+id/titleTextView"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:clipToPadding="false"
+        android:orientation="horizontal"
         android:overScrollMode="never" />
 
-</FrameLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/recyclerView"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:progress="50"
+        android:progressDrawable="@drawable/bene_alloc_progressbar" />
+
+    <CheckBox
+        android:id="@+id/equalCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/progressBar"
+        android:layout_below="@+id/progressBar"
+        android:text="equal" />
+
+
+</RelativeLayout>
