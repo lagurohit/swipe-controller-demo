@@ -3,6 +3,7 @@ package pl.fanfatal.swipecontrollerdemo;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,11 @@ import android.widget.TextView;
 import java.util.List;
 
 class PlayersDataAdapter extends RecyclerView.Adapter<PlayersDataAdapter.PlayerViewHolder> {
-    public List<Player> players;
+    public List<AccountBeneficaryList> accountBeneficaryLists;
     private PercentageChangeListener percentageChangeListener;
 
-    public PlayersDataAdapter(List<Player> players, PercentageChangeListener percentageChangeListener) {
-        this.players = players;
+    public PlayersDataAdapter(List<AccountBeneficaryList> accountBeneficaryLists, PercentageChangeListener percentageChangeListener) {
+        this.accountBeneficaryLists = accountBeneficaryLists;
         this.percentageChangeListener = percentageChangeListener;
     }
 
@@ -29,12 +30,36 @@ class PlayersDataAdapter extends RecyclerView.Adapter<PlayersDataAdapter.PlayerV
     }
 
     @Override
-    public void onBindViewHolder(PlayerViewHolder holder, int position) {
-        Player player = players.get(position);
-        holder.name.setText(player.name);
-        holder.percentage.setText("" + player.percentage);
-        final int pos = position;
-        holder.percentage.addTextChangedListener(new TextWatcher() {
+    public void onBindViewHolder(final PlayerViewHolder holder, int position) {
+        final AccountBeneficaryList accountBeneficaryList = accountBeneficaryLists.get(position);
+        holder.name.setText(accountBeneficaryList.name);
+        holder.percentage.setText("" + (int) (Double.parseDouble(accountBeneficaryList.percentage.value) * 100));
+        holder.id = position;
+
+        holder.percentage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    holder.percentage.addTextChangedListener(holder.percentInputWatcher);
+                else
+                    holder.percentage.removeTextChangedListener(holder.percentInputWatcher);
+            }
+        });
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return accountBeneficaryLists.size();
+    }
+
+    public class PlayerViewHolder extends RecyclerView.ViewHolder {
+        private TextView name;
+        private EditText percentage;
+        private int id;
+        public TextWatcher percentInputWatcher = new TextWatcher() {
+            String _tempString;
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -47,24 +72,20 @@ class PlayersDataAdapter extends RecyclerView.Adapter<PlayersDataAdapter.PlayerV
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().trim().equals("") && s != null) {
-                    Player player = players.get(pos);
-                    player.percentage = Integer.parseInt("" + s);
+                String newString = s.toString().trim();
+                if (_tempString == null) {
+                    _tempString = s.toString();
+                }
+                if (s != null && !newString.equals("") && newString != _tempString) {
+                    AccountBeneficaryList accountBeneficaryList = accountBeneficaryLists.get(PlayerViewHolder.this.id);
+                    //set % value because of over .88 fo
+                    accountBeneficaryList.percentage.value = "" + ((Double.parseDouble("" + s) / 100));
                     percentageChangeListener.onPercentageChanged();
+                    Log.d("aa", "afterTextChanged: ");
                 }
             }
-        });
+        };
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return players.size();
-    }
-
-    public class PlayerViewHolder extends RecyclerView.ViewHolder {
-        private TextView name;
-        private EditText percentage;
 
         public PlayerViewHolder(View view) {
             super(view);
